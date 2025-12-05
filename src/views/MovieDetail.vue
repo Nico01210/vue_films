@@ -16,9 +16,6 @@
           <p v-if="releaseDate" class="release-date">
             <strong>📅 Date de sortie :</strong> {{ formatDate(releaseDate) }}
           </p>
-          <p v-if="duration" class="duration">
-            <strong>⏱️ Durée :</strong> {{ duration }} min
-          </p>
           <p v-if="rating" class="rating">
             <strong>⭐ Note :</strong> {{ rating }}/10
           </p>
@@ -31,7 +28,6 @@
           <p v-if="genres"><strong>🎭 Genres :</strong> {{ genres }}</p>
           <p v-if="actors"><strong>👥 Acteurs :</strong> {{ actors }}</p>
           <p v-if="country"><strong>🌍 Pays :</strong> {{ country }}</p>
-          <p v-if="language"><strong>🗣️ Langue :</strong> {{ language }}</p>
         </div>
         
         <!-- Debug: Afficher toutes les propriétés disponibles -->
@@ -63,7 +59,16 @@ export default {
       return this.movie?.title || 'Titre inconnu';
     },
     posterUrl() {
-      return this.movie?.poster;
+      const poster = this.movie?.poster;
+      if (!poster) return null;
+      
+      // Si l'URL commence déjà par http/https, la retourner telle quelle
+      if (poster.startsWith('http://') || poster.startsWith('https://')) {
+        return poster;
+      }
+      
+      // Sinon, construire l'URL complète avec le domaine Amazon
+      return `https://m.media-amazon.com/images/M/${poster}`;
     },
     releaseDate() {
       return this.movie?.year; // ton API n'a que 'year'

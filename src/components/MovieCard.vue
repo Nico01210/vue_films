@@ -1,7 +1,7 @@
 <template>
   <div class="movie-card">
-    <div v-if="posterUrl" class="movie-poster-container">
-      <img :src="posterUrl" :alt="movie.title" class="movie-poster" />
+    <div v-if="posterUrl && !imageError" class="movie-poster-container">
+      <img :src="posterUrl" :alt="movie.title" class="movie-poster" @error="imageError = true" />
     </div>
     <div v-else class="movie-poster-placeholder">
       <span>🎬</span>
@@ -33,13 +33,33 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      imageError: false
+    };
+  },
   computed: {
     movieId() {
       // Gérer différents formats d'ID (@id pour API Platform)
       return this.movie.id || this.movie['@id']?.split('/').pop();
     },
     posterUrl() {
-      return this.movie.posterUrl || this.movie.poster || this.movie.posterPath || this.movie.poster_path;
+      const poster = this.movie.posterUrl || this.movie.poster || this.movie.posterPath || this.movie.poster_path;
+      if (!poster) return null;
+      
+      // Debug: afficher la valeur du poster
+      if (this.movie.id === this.movie.id) { // Premier film seulement
+        console.log('Poster brut:', poster);
+      }
+      
+      // Si l'URL commence déjà par http/https, la retourner telle quelle
+      if (poster.startsWith('http://') || poster.startsWith('https://')) {
+        return poster;
+      }
+      
+      // L'API retourne juste le nom de fichier, il faut peut-être utiliser votre serveur backend
+      // ou un proxy. Pour l'instant, retournons null pour afficher le placeholder
+      return null;
     },
     releaseYear() {
       const date = this.movie.releaseDate || this.movie.release_date || this.movie.releasedAt;

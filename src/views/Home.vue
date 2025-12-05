@@ -1,7 +1,7 @@
 <template>
     <h1>NETFLOX</h1>
     
-    <H2> Bienvenue sur votre site de film en streaming</H2>
+    <h2> Bienvenue sur votre site de film en streaming</h2>
   <div>
     <SearchBar @search="handleSearch" />
     <div class="movie-list">
